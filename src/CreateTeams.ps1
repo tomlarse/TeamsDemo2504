@@ -8,7 +8,7 @@ param(
 
 #Automatic Teams creation starts here
 #Global variables
-$SPSite = "https://codesalot.sharepoint.com/sites/TeamsDemo"
+$SPSite = "https://codesalot.sharepoint.com/sites/TeamsDemo/"
 $SPList = "Nytt Team"
 
 $login = Get-AutomationPSCredential -Name 'AzureAdmin'
@@ -66,7 +66,6 @@ Write-Output $guestAccess
 
 if($guestAccess -eq "No")
 {
-    try{
         #importing AzureADPreview modules
         Import-Module AzureADPreview
         Connect-AzureAD -TenantId $tenantId -Credential $login
@@ -83,15 +82,6 @@ if($guestAccess -eq "No")
         
         #reset $guestaccess flag
         $guestAccess = "NA"
-    }
-    catch{
-        #Catch errors
-        Write-Output "An error occurred:"
-        Write-Output $_.Exception.Message
-
-        $spoconn = Connect-PnPOnline –Url $SPSite –Credentials (Get-AutomationPSCredential -Name 'AzureAdmin') -ReturnConnection -Verbose
-        $itemupdate = Set-PnPListItem -List $SPList -Identity $SPListItemID -Values @{"TeamsCreated" = "Error Occured setting GuestAccess"} -Connection $spoconn
-    }
 
 }
 
