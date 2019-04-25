@@ -14,7 +14,7 @@ $SPList = "Nytt Team"
 $login = Get-AutomationPSCredential -Name 'AzureAdmin'
 
 Login-AzureRmAccount -Credential $login
-$tenantId = Get-AzureRmAutomationVariable Name 'TenantId'
+$tenantId = Get-AzureRmAutomationVariable Name 'TenantId' -AutomationAccountName 'TeamsDemo'
 
 Import-Module SharePointPnPPowerShellOnline
 
