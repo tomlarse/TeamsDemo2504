@@ -46,7 +46,7 @@ Connect-MicrosoftTeams -TenantId $tenantId -Credential $login
 
 #Create new Team
 $team = New-Team -displayname $teamsName -Visibility Private
-Add-TeamUser -GroupId $team.GroupId -User $TeamsOwner -Role Owner
+Add-TeamUser -GroupId $team.GroupId -User $TeamsOwner.Email -Role Owner
 
 #Add channels
 New-TeamChannel -GroupId $team.GroupId -DisplayName "01 Planning"
