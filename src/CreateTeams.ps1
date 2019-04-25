@@ -2,6 +2,7 @@
 param(
     $guestAccess,
     $teamsName,
+    $teamsOwner,
     $SPListItemID
 )
 
@@ -43,8 +44,8 @@ try{
     Connect-MicrosoftTeams -TenantId $tenantId -Credential $login
 
     #Create new Team
-    $team = New-Team -alias $teamsName -displayname $Input.TeamsDisplayName -AccessType Private
-    Add-TeamUser -GroupId $team.GroupId -User $Input.TeamsOwner -Role Owner
+    $team = New-Team -alias $teamsName -displayname $teamsName -AccessType Private
+    Add-TeamUser -GroupId $team.GroupId -User $TeamsOwner -Role Owner
 
     #Add channels
     New-TeamChannel -GroupId $team.GroupId -DisplayName "01 Planning"
@@ -55,7 +56,7 @@ try{
     Write-Output 'Teams created'
 
     #call upload file function
-    Upload-Files
+    Invoke-FileUpload
 
     #Disabling Guest Access to Teams
     Write-Output "GuestAccess allowed:"
