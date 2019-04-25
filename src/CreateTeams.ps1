@@ -17,6 +17,7 @@ Login-AzureRmAccount -Credential $login
 $tenantId = Get-AzureRmAutomationVariable Name 'TenantId' -AutomationAccountName 'TeamsDemo' -ResourceGroupName "TeamsDemo"
 
 Import-Module SharePointPnPPowerShellOnline
+Import-Module MicrosoftTeams
 
 Function Invoke-FileUpload{
     Param(   
