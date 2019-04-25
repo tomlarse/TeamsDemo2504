@@ -39,74 +39,63 @@ Function Invoke-FileUpload{
     
 } #End Upload-Files 
 
-try{
-    #Connecting to O365
-    Connect-MicrosoftTeams -TenantId $tenantId -Credential $login
 
-    #Create new Team
-    $team = New-Team -alias $teamsName -displayname $teamsName -AccessType Private
-    Add-TeamUser -GroupId $team.GroupId -User $TeamsOwner -Role Owner
+#Connecting to O365
+Connect-MicrosoftTeams -TenantId $tenantId -Credential $login
 
-    #Add channels
-    New-TeamChannel -GroupId $team.GroupId -DisplayName "01 Planning"
-    New-TeamChannel -GroupId $team.GroupId -DisplayName "02 Execution"
-    New-TeamChannel -GroupId $team.GroupId -DisplayName "03 Final"
+#Create new Team
+$team = New-Team -alias $teamsName -displayname $teamsName -AccessType Private
+Add-TeamUser -GroupId $team.GroupId -User $TeamsOwner -Role Owner
 
-    #Teams created
-    Write-Output 'Teams created'
+#Add channels
+New-TeamChannel -GroupId $team.GroupId -DisplayName "01 Planning"
+New-TeamChannel -GroupId $team.GroupId -DisplayName "02 Execution"
+New-TeamChannel -GroupId $team.GroupId -DisplayName "03 Final"
 
-    #call upload file function
-    Invoke-FileUpload
+#Teams created
+Write-Output 'Teams created'
 
-    #Disabling Guest Access to Teams
-    Write-Output "GuestAccess allowed:"
-    Write-Output $guestAccess
+#call upload file function
+Invoke-FileUpload
+
+#Disabling Guest Access to Teams
+Write-Output "GuestAccess allowed:"
+Write-Output $guestAccess
 
 
-    if($guestAccess -eq "No")
-    {
-        try{
-            #importing AzureADPreview modules
-            Import-Module AzureADPreview
-            Connect-AzureAD -TenantId $tenantId -Credential $login
+if($guestAccess -eq "No")
+{
+    try{
+        #importing AzureADPreview modules
+        Import-Module AzureADPreview
+        Connect-AzureAD -TenantId $tenantId -Credential $login
 
-            #Turn OFF guest access
-            $template = Get-AzureADDirectorySettingTemplate | ? {$_.displayname -eq "group.unified.guest"}
-            $settingsCopy = $template.CreateDirectorySetting()
-            $settingsCopy["AllowToAddGuests"]=$False
+        #Turn OFF guest access
+        $template = Get-AzureADDirectorySettingTemplate | ? {$_.displayname -eq "group.unified.guest"}
+        $settingsCopy = $template.CreateDirectorySetting()
+        $settingsCopy["AllowToAddGuests"]=$False
 
-            New-AzureADObjectSetting -TargetType Groups -TargetObjectId $team.GroupId -DirectorySetting $settingsCopy
+        New-AzureADObjectSetting -TargetType Groups -TargetObjectId $team.GroupId -DirectorySetting $settingsCopy
 
-            #Verify settings
-            Get-AzureADObjectSetting -TargetObjectId $team.GroupId -TargetType Groups | fl Values
-            
-            #reset $guestaccess flag
-            $guestAccess = "NA"
-        }
-        catch{
-            #Catch errors
-            Write-Output "An error occurred:"
-            Write-Output $_.Exception.Message
+        #Verify settings
+        Get-AzureADObjectSetting -TargetObjectId $team.GroupId -TargetType Groups | fl Values
+        
+        #reset $guestaccess flag
+        $guestAccess = "NA"
+    }
+    catch{
+        #Catch errors
+        Write-Output "An error occurred:"
+        Write-Output $_.Exception.Message
 
-            $spoconn = Connect-PnPOnline –Url $SPSite –Credentials (Get-AutomationPSCredential -Name 'AzureAdmin') -ReturnConnection -Verbose
-            $itemupdate = Set-PnPListItem -List $SPList -Identity $SPListItemID -Values @{"TeamsCreated" = "Error Occured setting GuestAccess"} -Connection $spoconn
-        }
-
+        $spoconn = Connect-PnPOnline –Url $SPSite –Credentials (Get-AutomationPSCredential -Name 'AzureAdmin') -ReturnConnection -Verbose
+        $itemupdate = Set-PnPListItem -List $SPList -Identity $SPListItemID -Values @{"TeamsCreated" = "Error Occured setting GuestAccess"} -Connection $spoconn
     }
 
-    #Updating SharePoint list item status
-    $spoconn = Connect-PnPOnline –Url $SPSite –Credentials (Get-AutomationPSCredential -Name 'AzureAdmin') -ReturnConnection -Verbose
-    $itemupdate = Set-PnPListItem -List $SPList -Identity $SPListItemID -Values @{"TeamsCreated" = "Success"} -Connection $spoconn
-
-    Write-Output "All done"
-
-}
-catch{
-    
-    #catch error if teams creation failed
-
-    $spoconn = Connect-PnPOnline –Url $SPSite –Credentials (Get-AutomationPSCredential -Name 'AzureAdmin') -ReturnConnection -Verbose
-    $itemupdate = Set-PnPListItem -List $SPList -Identity $SPListItemID -Values @{"TeamsCreated" = "Success"} -Connection $spoconn
 }
 
+#Updating SharePoint list item status
+$spoconn = Connect-PnPOnline –Url $SPSite –Credentials (Get-AutomationPSCredential -Name 'AzureAdmin') -ReturnConnection -Verbose
+$itemupdate = Set-PnPListItem -List $SPList -Identity $SPListItemID -Values @{"TeamsCreated" = "Success"} -Connection $spoconn
 
+Write-Output "All done"
