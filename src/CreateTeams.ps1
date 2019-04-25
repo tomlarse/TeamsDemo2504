@@ -2,13 +2,13 @@
 param(
     $guestAccess,
     $teamsName,
-    $SPSite,
-    $SPListItemID,
-    $SPList
+    $SPListItemID
 )
 
 #Automatic Teams creation starts here
 #Global variables
+$SPSite = "https://codesalot.sharepoint.com/sites/TeamsDemo"
+$SPList = "Nytt Team"
 
 $login = Get-AutomationPSCredential -Name 'AzureAdmin'
 
