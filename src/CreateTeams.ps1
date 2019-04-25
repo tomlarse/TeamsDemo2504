@@ -9,8 +9,11 @@ param(
 
 #Automatic Teams creation starts here
 #Global variables
-$tenantId = Get-AzureRmAutomationVariable Name 'TenantId'
+
 $login = Get-AutomationPSCredential -Name 'AzureAdmin'
+
+Connect-AzureRmAccount -Credential $login
+$tenantId = Get-AzureRmAutomationVariable Name 'TenantId'
 
 Import-Module SharePointPnPPowerShellOnline
 
