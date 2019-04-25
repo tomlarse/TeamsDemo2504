@@ -9,8 +9,10 @@ param(
 
 #Automatic Teams creation starts here
 #Global variables
-$tenantId = "ss"
+$tenantId = Get-AzureRmAutomationVariable Name 'TenantId'
 $login = Get-AutomationPSCredential -Name 'AzureAdmin'
+
+Import-Module SharePointPnPPowerShellOnline
 
 Function Invoke-FileUpload{
     Param(   
@@ -21,14 +23,14 @@ Function Invoke-FileUpload{
     #[String]$GroupName
     )
 
-    $spoconn = Connect-PnPOnline –Url https://jh365dev.sharepoint.com/sites/$teamsName –Credentials $login -ReturnConnection
+    $spoconn = Connect-PnPOnline –Url https://codesalot.sharepoint.com/sites/$teamsName –Credentials $login -ReturnConnection
     Add-PnPFolder -Name "General" -Folder "/Shared Documents"
     Add-PnPFolder -Name "01 Planning" -Folder "/Shared Documents"
     Add-PnPFolder -Name "02 Execution" -Folder "/Shared Documents"
     Add-PnPFolder -Name "03 Final" -Folder "/Shared Documents"
 
     #copy template to new team channel
-    Copy-PnPFile -SourceUrl /sites/JHKontraktHndtering/Shared%20Documents/Avtale%20Mal.docx -TargetUrl /sites/$TeamsName/Shared%20Documents/General -Force -Confirm
+    #Copy-PnPFile -SourceUrl /sites/JHKontraktHndtering/Shared%20Documents/Avtale%20Mal.docx -TargetUrl /sites/$TeamsName/Shared%20Documents/General -Force -Confirm
          
     
 } #End Upload-Files 
