@@ -28,7 +28,7 @@ Function Invoke-FileUpload{
     #[String]$GroupName
     )
 
-    $spoconn = Connect-PnPOnline –Url https://codesalot.sharepoint.com/sites/$teamsName –Credentials $login -ReturnConnection
+    $spoconn = Connect-PnPOnline –Url "https://codesalot.sharepoint.com/sites/$teamsName" –Credentials $login -ReturnConnection
     Add-PnPFolder -Name "General" -Folder "/Shared Documents"
     Add-PnPFolder -Name "01 Planning" -Folder "/Shared Documents"
     Add-PnPFolder -Name "02 Execution" -Folder "/Shared Documents"
@@ -45,7 +45,7 @@ Function Invoke-FileUpload{
 Connect-MicrosoftTeams -TenantId $tenantId -Credential $login
 
 #Create new Team
-$team = New-Team -displayname $teamsName -AccessType Private
+$team = New-Team -displayname $teamsName -Visibility Private
 Add-TeamUser -GroupId $team.GroupId -User $TeamsOwner -Role Owner
 
 #Add channels
