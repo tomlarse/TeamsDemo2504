@@ -45,7 +45,7 @@ Function Invoke-FileUpload{
 Connect-MicrosoftTeams -TenantId $tenantId -Credential $login
 
 #Create new Team
-$team = New-Team -alias $teamsName -displayname $teamsName -AccessType Private
+$team = New-Team -displayname $teamsName -AccessType Private
 Add-TeamUser -GroupId $team.GroupId -User $TeamsOwner -Role Owner
 
 #Add channels
